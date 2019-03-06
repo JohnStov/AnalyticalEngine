@@ -13,14 +13,16 @@ module Wheel
         let index = values |> List.findIndex (fun v -> v = wheel)
         values.[(index-1) % values.Length]
 
+    let add1 wheels =
+        let carryUp (carry : bool) (wheel: Wheel) =
+            ((if carry then inc wheel else wheel), (wheel = Pos9 && carry))
+        wheels |> List.mapFold carryUp true |> fst
+
+    let complement1 wheel = 
+        withComplements |> List.find (fun w -> fst w = wheel) |> snd
+
     let complement wheels = 
-        let add1 wheels =
-            let fn (carry : bool) (wheel: Wheel) =
-                ((if carry then inc wheel else wheel), (wheel = Pos9 && carry))
-            Array.mapFold fn true
-        let complement1 wheel = 
-            withComplements |> List.find (fun w -> fst w = wheel) |> snd
-        wheels |> Array.map complement1 |> add1
+        wheels |> List.map complement1 |> add1
 
     let init () =
         Pos0
@@ -37,3 +39,4 @@ module Wheel
         | '7' -> Pos7
         | '8' -> Pos8
         | '9' -> Pos9
+        | _  -> Pos0

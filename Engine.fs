@@ -3,11 +3,14 @@ module Engine
 
     let move engine var =
         match var with 
-        | Load address -> { engine with mill = Mill.load (Store.read address) }
+        | Load address -> { engine with mill = Mill.load engine.mill (Store.read engine.store address) }
         | ZeroLoad address ->
-            let value = Store.zeroRead Address
-            { engine with mill = Mill.load value }
-        | Store address -> { engine with mill = Mill.load (Store.read address) }
+            { 
+                engine with 
+                    mill = Mill.load engine.mill (Store.read engine.store address)
+                    store = engine.store.[0..address-1] @ [Stack.zero ()] @ engine.store.[address+1..]
+            }
+        | Store address -> { engine with mill = Mill.load engine.mill (Store.read engine.store address) }
 
     let execute engine instruction =
         match instruction with
@@ -18,7 +21,8 @@ module Engine
         | NoOp -> engine
 
     let run engine instructions =
-        instructions |> List.map (execute engine)
+        instructions |> List.fold execute engine |> ignore
+        0
 
     let init ()=
         { store = Store.init (); mill = Mill.init () }

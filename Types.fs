@@ -4,7 +4,7 @@ module Types
 
     type Wheel = | Pos0 | Pos1 | Pos2 | Pos3 | Pos4 | Pos5 | Pos6 | Pos7 | Pos8 | Pos9
 
-    type Stack = { wheels: Wheel array; negative : bool }
+    type Stack = { wheels: Wheel list; negative : bool }
 
     type Address = int
 
@@ -30,9 +30,9 @@ module Types
         | Comment of string
         | NoOp
 
-    type Store = Stack array
+    type Store = Stack list
 
-    type Mill = { ingress : Stack array; egress : Stack; operation : Op; ingressSelect: int }
+    type Mill = { ingress : Stack list; egress : Stack; operation : Op; ingressSelect: int }
 
     type Engine = { store : Store; mill : Mill }
 
