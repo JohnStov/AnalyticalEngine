@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="Types.fs" />
+    <Compile Include="Wheel.fs" />
+    <Compile Include="Stack.fs" />
+    <Compile Include="Reader.fs" />
+    <Compile Include="Mill.fs" />
+    <Compile Include="Store.fs" />
+    <Compile Include="Engine.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+</Project>
