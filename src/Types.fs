@@ -1,6 +1,7 @@
 module Types
-    let STORESIZE = 1000
-    let STACKSIZE = 50
+    let ADDRESSDIGITS = 1
+    let STORESIZE = pown 10 ADDRESSDIGITS
+    let STACKSIZE = 10
 
     type Wheel = | Pos0 | Pos1 | Pos2 | Pos3 | Pos4 | Pos5 | Pos6 | Pos7 | Pos8 | Pos9
 
@@ -32,7 +33,7 @@ module Types
 
     type Store = Stack list
 
-    type Mill = { ingress : Stack list; egress : Stack; operation : Op; ingressSelect: int }
+    type Mill = { ingress : Stack list; egress : Stack; operation : Op; ingressSelect: int; runUp: bool }
 
     type Engine = { store : Store; mill : Mill }
 

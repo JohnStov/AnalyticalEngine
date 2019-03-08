@@ -13,6 +13,16 @@ module Wheel
         let index = values |> List.findIndex (fun v -> v = wheel)
         values.[(index-1) % values.Length]
 
+    let add wheel1 wheel2 =
+        let mutable carry = false
+        let mutable result = wheel1
+        let mutable addor = wheel2
+        while addor <> Pos0 do
+            addor <- dec addor
+            result <- inc result
+            carry <- carry || result = Pos0
+        (result, carry)
+
     let add1 wheels =
         let carryUp (carry : bool) (wheel: Wheel) =
             ((if carry then inc wheel else wheel), (wheel = Pos9 && carry))
