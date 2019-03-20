@@ -6,6 +6,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Include="Bell-sound-effect-ding.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Fibonacci.ana">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Compile Include="Types.fs" />
     <Compile Include="Wheel.fs" />
     <Compile Include="Stack.fs" />
@@ -14,6 +20,10 @@
     <Compile Include="Store.fs" />
     <Compile Include="Engine.fs" />
     <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="1.9.0-preview2" />
   </ItemGroup>
 
 </Project>

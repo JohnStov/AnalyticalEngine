@@ -1,34 +1,7 @@
 ﻿open Engine
 
-let program =
-    @"N004    30      . Number of terms to compute
-N000    0       . Constant zero
-N005    1       . Constant 1
-N001    0       . Previous term
-N002    1       . Current term
- N003           . Temporary for next term
-+
-L002    . temp = current + previous
-P       . Print current term while it's on the Mill axis
-L001
-S003
-L002    . previous = next
-L000
-S001
-L003    . current = temp
-L000
-S002
--
-L004    . Decrement iteration count
-L005
-S004
-CF?1    . Stop if run up set
-CB+17   . Repeat with new values
-B
-H"
-
 [<EntryPoint>]
 let main argv  =
     let engine = Engine.init ()
-    let program = Reader.parseString program
+    let program = Reader.parseFile "Fibonacci.ana"
     Engine.run program engine 

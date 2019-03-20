@@ -1,7 +1,7 @@
 module Types
-    let ADDRESSDIGITS = 1
+    let ADDRESSDIGITS = 3
     let STORESIZE = pown 10 ADDRESSDIGITS
-    let STACKSIZE = 10
+    let STACKSIZE = 50
 
     type Wheel = 
         | Pos0 

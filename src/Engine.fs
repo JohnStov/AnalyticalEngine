@@ -1,6 +1,16 @@
 module Engine
     open Types
-    open System
+    open NAudio.Wave
+
+    let mutable playing = false;
+
+    let ringBell () =
+        let fileReader = new Mp3FileReader("Bell-sound-effect-ding.mp3")
+        let waveOut = new WaveOutEvent ()
+        fileReader |> waveOut.Init
+        waveOut.PlaybackStopped |> Event.add (fun evArgs -> playing <- false;)
+        playing <- true
+        waveOut.Play ()
 
     let branch combinatorial engine =
         let newIp =
@@ -15,9 +25,10 @@ module Engine
     let act action engine =
         match action with
         | Bell -> 
-            printfn "Ding!"
+            ringBell ()
             engine
         | Halt -> 
+            printfn "Program Halted"
             { engine with instructionPointer = -1 }
         | Print -> 
             printfn "%s" (engine.mill.axis |> Stack.toString)
@@ -77,6 +88,7 @@ module Engine
 
     let run program engine =
         execute program engine |> ignore
+        while playing do (System.Threading.Thread.Sleep 500)
         0
 
     let init ()=
