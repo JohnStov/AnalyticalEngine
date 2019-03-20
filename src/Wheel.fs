@@ -5,13 +5,17 @@ module Wheel
     let complements = values |> List.rev
     let withComplements = List.zip values complements
 
+    let private indexOf wheel = 
+        values |> List.findIndex (fun v -> v = wheel)
+
+    let private valueAt index = 
+        values.[index % values.Length]
+
     let inc wheel = 
-        let index = values |> List.findIndex (fun v -> v = wheel)
-        values.[(index+1) % values.Length]
+        valueAt (indexOf wheel + 1)
 
     let dec wheel = 
-        let index = values |> List.findIndex (fun v -> v = wheel)
-        values.[(index-1) % values.Length]
+        valueAt (indexOf wheel - 1)
 
     let add wheel1 wheel2 =
         let mutable carry = false

@@ -1,5 +1,6 @@
 **/obj/*
 **/bin/*
 /.vscode/launch.json
-/src/.vs/AnalyticalEngine/v16/.suo
 /src/AnalyticalEngine.sln.DotSettings.user
+**/.vs/*
+
