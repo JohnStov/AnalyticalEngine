@@ -17,14 +17,18 @@ let wheelTests =
         testCase "When a wheel at Pos0 is decremented the result should be Pos9" <| 
             fun _ -> Pos0 |> Wheel.inc |> should equal Pos1
 
-        testCase "The 10s complement of 0 is 0" <|
-            fun _ -> [Pos0; Pos0; Pos0; Pos0; Pos0] |> Wheel.complement |> should equal [Pos0; Pos0; Pos0; Pos0; Pos0]
-        testCase "The 10s complement of 1 is 99999" <|
-            fun _ -> [Pos1; Pos0; Pos0; Pos0; Pos0] |> Wheel.complement |> should equal [Pos9; Pos9; Pos9; Pos9; Pos9]
-        testCase "The 10s complement of 99999 is 1" <|
-            fun _ -> [Pos9; Pos9; Pos9; Pos9; Pos9] |> Wheel.complement |> should equal [Pos1; Pos0; Pos0; Pos0; Pos0]
-        testCase "10s complement is its inverse" <|
-            fun _ -> [Pos1; Pos2; Pos3; Pos4; Pos5] |> Wheel.complement |> Wheel.complement |> should equal [Pos1; Pos2; Pos3; Pos4; Pos5]
+        testCase "Negating 0 gives 0" <|
+            fun _ -> {wheels = [Pos0; Pos0; Pos0; Pos0; Pos0]; negative = false} |> Stack.negate |> should equal {wheels = [Pos0; Pos0; Pos0; Pos0; Pos0]; negative = true}
+        testCase "Negating 1 gives -1" <|
+            fun _ -> {wheels = [Pos1; Pos0; Pos0; Pos0; Pos0]; negative = false} |> Stack.negate |> should equal {wheels = [Pos9; Pos9; Pos9; Pos9; Pos9]; negative = true}
+        testCase "Negating -1 gives 1" <|
+            fun _ -> {wheels = [Pos9; Pos9; Pos9; Pos9; Pos9]; negative = true} |> Stack.negate |> should equal {wheels = [Pos1; Pos0; Pos0; Pos0; Pos0]; negative = false}
+        testCase "Negating 99999 gives -99999" <|
+            fun _ -> {wheels = [Pos9; Pos9; Pos9; Pos9; Pos9]; negative = false} |> Stack.negate |> should equal {wheels = [Pos1; Pos0; Pos0; Pos0; Pos0]; negative = true}
+        testCase "Negating -99999 gives 99999" <|
+            fun _ -> {wheels = [Pos1; Pos0; Pos0; Pos0; Pos0]; negative = true} |> Stack.negate |> should equal {wheels = [Pos9; Pos9; Pos9; Pos9; Pos9]; negative = false}
+        testCase "Negation is its inverse" <|
+            fun _ -> {wheels = [Pos1; Pos2; Pos3; Pos4; Pos5]; negative = false} |> Stack.negate |> Stack.negate |> should equal {wheels = [Pos1; Pos2; Pos3; Pos4; Pos5]; negative = false}
 
         testCase "Adding 0 and 0 should be 0 with no carry" <|
             fun _ -> Wheel.add Pos0 Pos0 |> should equal (Pos0, false)
@@ -56,24 +60,39 @@ let wheelTests =
         testCase "Stack.fromString '-123450' is -876550" <|
             fun _ -> Stack.fromString "-123450" |> should equal {wheels = [Pos0; Pos5; Pos5; Pos6; Pos7; Pos8]; negative = true}
 
-        testCase "Adding Stacks '0' and '0' should be '0' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "0") (Stack.fromString "0") |> should equal {wheels = [Pos0]; negative = false}
-        testCase "Adding Stacks '1' and '1' should be '2' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "1") (Stack.fromString "1") |> should equal {wheels = [Pos2]; negative = false}
-        testCase "Adding Stacks '00000' and '00000' should be '00000' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "00000") (Stack.fromString "00000") |> should equal {wheels = [Pos0;Pos0;Pos0;Pos0;Pos0]; negative = false}
-        testCase "Adding Stacks '00001' and '00001' should be '00002' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "00001") (Stack.fromString "00001") |> should equal {wheels = [Pos2;Pos0;Pos0;Pos0;Pos0]; negative = false}
-        testCase "Adding Stacks '00005' and '00005' should be '00010' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "00005") (Stack.fromString "00005") |> should equal {wheels = [Pos0;Pos1;Pos0;Pos0;Pos0]; negative = false}
-        testCase "Adding Stacks '12345' and '12345' should be '14690' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "12345") (Stack.fromString "12345") |> should equal {wheels = [Pos0;Pos9;Pos6;Pos4;Pos2]; negative = false}
-        testCase "Adding Stacks '99999' and '00001' should be '00000' with carry" <|
-            fun _ -> Stack.add (Stack.fromString "99999") (Stack.fromString "00001") |> should equal {wheels = [Pos0;Pos0;Pos0;Pos0;Pos0]; negative = true}
-        testCase "Adding Stacks '99999' and '-00001' should be '99998' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "99999") (Stack.fromString "-00001") |> should equal {wheels = [Pos8;Pos9;Pos9;Pos9;Pos9]; negative = false}
-        testCase "Adding Stacks '99999' and '-99999' should be '00000' with no carry" <|
-            fun _ -> Stack.add (Stack.fromString "99999") (Stack.fromString "-99999") |> should equal {wheels = [Pos0;Pos0;Pos0;Pos0;Pos0]; negative = false}
+        testCase "Adding Stacks '0' and '0' should be '0' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "0"); (Stack.fromString "0")] 
+                    |> should equal ({wheels = [Pos0]; negative = false}, false)
+        testCase "Adding Stacks '1' and '1' should be '2' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "1"); (Stack.fromString "1")] 
+                    |> should equal ({wheels = [Pos2]; negative = false}, false)
+        testCase "Adding Stacks '00000' and '00000' should be '00000' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "00000"); (Stack.fromString "00000")] 
+                    |> should equal ({wheels = [Pos0;Pos0;Pos0;Pos0;Pos0]; negative = false}, false)
+        testCase "Adding Stacks '00001' and '00001' should be '00002' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "00001"); (Stack.fromString "00001")] 
+                    |> should equal ({wheels = [Pos2;Pos0;Pos0;Pos0;Pos0]; negative = false}, false)
+        testCase "Adding Stacks '00005' and '00005' should be '00010' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "00005"); (Stack.fromString "00005")] 
+                    |> should equal ({wheels = [Pos0;Pos1;Pos0;Pos0;Pos0]; negative = false}, false)
+        testCase "Adding Stacks '12345' and '12345' should be '14690' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "12345"); (Stack.fromString "12345")] 
+                    |> should equal ({wheels = [Pos0;Pos9;Pos6;Pos4;Pos2]; negative = false}, false)
+        testCase "Adding Stacks '99999' and '00001' should be '00000' with run up" <|
+            fun _ -> Mill.add [(Stack.fromString "99999"); (Stack.fromString "00001")] 
+                    |> should equal ({wheels = [Pos0;Pos0;Pos0;Pos0;Pos0]; negative = true}, true)
+        testCase "Adding Stacks '99999' and '-00001' should be '99998' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "99999"); (Stack.fromString "-00001")] 
+                    |> should equal ({wheels = [Pos8;Pos9;Pos9;Pos9;Pos9]; negative = false}, false)
+        testCase "Adding Stacks '99999' and '-99999' should be '00000' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "99999"); (Stack.fromString "-99999")] 
+                    |> should equal ({wheels = [Pos0;Pos0;Pos0;Pos0;Pos0]; negative = false}, false)
+        testCase "Adding Stacks '0000000030' and '-0000000001' should be '0000000029' with no run up" <|
+            fun _ -> Mill.add [(Stack.fromString "0000000030"); (Stack.fromString "-0000000001")] 
+                    |> should equal ({wheels = [Pos9;Pos2;Pos0;Pos0;Pos0;Pos0;Pos0;Pos0;Pos0;Pos0]; negative = false}, false)
+        testCase "Subtracting Stacks '0000000001' from '0000000030' should be '0000000029' with no run up" <|
+            fun _ -> Mill.subtract [(Stack.fromString "0000000030"); (Stack.fromString "0000000001")] 
+                    |> should equal ({wheels = [Pos9;Pos2;Pos0;Pos0;Pos0;Pos0;Pos0;Pos0;Pos0;Pos0]; negative = false}, false)
     ]
 
 [<EntryPoint>]

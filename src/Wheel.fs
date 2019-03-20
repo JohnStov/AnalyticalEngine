@@ -23,16 +23,8 @@ module Wheel
             carry <- carry || result = Pos0
         (result, carry)
 
-    let add1 wheels =
-        let carryUp (carry : bool) (wheel: Wheel) =
-            ((if carry then inc wheel else wheel), (wheel = Pos9 && carry))
-        wheels |> List.mapFold carryUp true |> fst
-
-    let complement1 wheel = 
+    let complement wheel = 
         withComplements |> List.find (fun w -> fst w = wheel) |> snd
-
-    let complement wheels = 
-        wheels |> List.map complement1 |> add1
 
     let init () =
         Pos0
@@ -50,3 +42,16 @@ module Wheel
         | '8' -> Pos8
         | '9' -> Pos9
         | _  -> Pos0
+
+    let toChar w = 
+        match w with
+        | Pos0 -> '0'
+        | Pos1 -> '1'
+        | Pos2 -> '2'
+        | Pos3 -> '3'
+        | Pos4 -> '4'
+        | Pos5 -> '5'
+        | Pos6 -> '6'
+        | Pos7 -> '7'
+        | Pos8 -> '8'
+        | Pos9 -> '9'

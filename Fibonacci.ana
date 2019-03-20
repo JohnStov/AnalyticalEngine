@@ -1,7 +1,4 @@
-﻿open Engine
-
-let program =
-    @"N004    30      . Number of terms to compute
+N004    30      . Number of terms to compute
 N000    0       . Constant zero
 N005    1       . Constant 1
 N001    0       . Previous term
@@ -25,10 +22,4 @@ S004
 CF?1    . Stop if run up set
 CB+17   . Repeat with new values
 B
-H"
-
-[<EntryPoint>]
-let main argv  =
-    let engine = Engine.init ()
-    let program = Reader.parseString program
-    Engine.run program engine 
+H

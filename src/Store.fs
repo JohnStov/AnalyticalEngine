@@ -4,9 +4,9 @@ module Store
     let init () =
         List.init STORESIZE (fun _ -> Stack.zero ())
     
-    let set (store : Store) num =
+    let set num (store : Store) =
         store.[0 .. num.address-1] @ [ Stack.create num.value ] @ store.[num.address+1 ..]
 
-    let read (store : Store) address =
+    let read address (store : Store) =
         store.[address]
 

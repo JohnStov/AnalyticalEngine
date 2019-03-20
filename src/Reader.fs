@@ -18,19 +18,27 @@ module Reader
     
     let parseLine str =
         match str with
-        | Match (sprintf "^N(\d{1,%d})\s([+-])(?\d+)\s.*$" ADDRESSDIGITS) groups -> 
+        | Match ("^N(\d{1,3})\s+([+-]?)(\d+)\s?.*$") groups -> 
             Number { 
                 address = groups.[0] |> int 
                 value = { 
                     negative = (groups.[1] = "-") 
                     value = zeroPadLeft STACKSIZE groups.[2] }}
-        | Match "^([+-*/])$" groups -> 
+        | Match "^([\+\-\*\/]\s?.*)$" groups -> 
             Operation (match groups.[0] with 
                       | "-" -> Subtract 
                       | "*" -> Multiply 
                       | "/" -> Divide
                       | "+" | _ -> Add)
-        | Match (sprintf "^([LZS])(\d{1,%d})\s.*$" ADDRESSDIGITS) groups -> 
+        | Match ("^C([FB])([\+\?])(\d+)\s?.*$") groups -> 
+            Combinatorial { forward = groups.[0] = "F"; conditional = groups.[1] = "?"; steps = groups.[2] |> int }
+        | Match ("^([HPB])\s?.*$") groups -> 
+            Action (match groups.[0] with
+                    | "H" -> Halt
+                    | "P" -> Print
+                    | "B" -> Bell
+                    | _ -> NoAction)
+        | Match ("^([LZS])(\d{1,3})\s?.*$") groups -> 
             Variable (match groups.[0] with 
                      | "Z" -> ZeroLoad (groups.[1] |> int) 
                      | "S" -> Store (groups.[1] |> int)
@@ -42,9 +50,9 @@ module Reader
 
     let parseString (str : string) =
         let lines = str.Split(Environment.NewLine) |> Array.toList
-        lines |> List.map parseLine
+        lines |> List.map parseLine |> List.toArray
 
     let parseFile path =
         let lines = File.ReadLines(path) |> Seq.toList
-        lines |> List.map parseLine
+        lines |> List.map parseLine |> List.toArray
 
