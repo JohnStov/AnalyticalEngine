@@ -1,15 +1,16 @@
 module Engine
     open Types
     open NAudio.Wave
+    open System.Threading
 
-    let mutable playing = false;
+    let bellRung = new Semaphore(1, 1)
 
     let ringBell () =
         let fileReader = new Mp3FileReader("Bell-sound-effect-ding.mp3")
         let waveOut = new WaveOutEvent ()
         fileReader |> waveOut.Init
-        waveOut.PlaybackStopped |> Event.add (fun evArgs -> playing <- false;)
-        playing <- true
+        waveOut.PlaybackStopped |> Event.add (fun evArgs -> bellRung.Release () |> ignore)
+        bellRung.WaitOne () |> ignore
         waveOut.Play ()
 
     let branch combinatorial engine =
@@ -88,7 +89,7 @@ module Engine
 
     let run program engine =
         execute program engine |> ignore
-        while playing do (System.Threading.Thread.Sleep 500)
+        bellRung.WaitOne () |> ignore
         0
 
     let init ()=
