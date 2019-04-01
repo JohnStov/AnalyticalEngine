@@ -23,6 +23,15 @@ module Stack
         else 
             result
     
+    let fromString (s : string) =
+        let negative, digits =
+            match s.[0] with
+            | '-' -> true, s.[1..]
+            | '+' -> false, s.[1..]
+            | _ -> false, s
+
+        create ({negative = negative; value = digits})
+
     let toString (stack : Stack) =
         let stack' = if stack.negative then (stack |> negate) else stack
         let str = stack'.wheels |> List.map Wheel.toChar |> List.rev |> Array.ofList |> String
