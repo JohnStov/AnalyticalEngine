@@ -1,4 +1,4 @@
-N004    60      . Number of terms to compute
+N004    30      . Number of terms to compute
 N000    0       . Constant zero
 N005    1       . Constant 1
 N001    0       . Previous term

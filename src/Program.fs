@@ -3,5 +3,5 @@
 [<EntryPoint>]
 let main argv  =
     let engine = Engine.init ()
-    let program = Reader.parseFile "Fibonacci.ana"
+    let program = Reader.parseFile argv.[0]
     Engine.run program engine 
